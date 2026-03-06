@@ -1,0 +1,19 @@
+
+version: 2
+
+sources:
+  - name: raw_pokeapi
+    database: airbyte_curso
+    schema: main
+    description: "Tablas crudas replicadas desde PokeAPI via Airbyte."
+    tables:
+      - name: pokemon
+        description: "Listado de Pokémon (stream pokemon)."
+
+  - name: raw_mysql
+    database: airbyte_curso
+    schema: main
+    description: "Tablas crudas replicadas desde MySQL via Airbyte."
+    tables:
+      - name: pokemon_type_dim
+        description: "Dimensión de tipos Pokémon creada en MySQL y replicada a MotherDuck."

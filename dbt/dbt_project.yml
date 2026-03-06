@@ -1,0 +1,30 @@
+
+name: 'iaad_mini_pokemon'
+version: '1.0.0'
+config-version: 2
+
+profile: 'iaad_mini_pokemon'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  iaad_mini_pokemon:
+    staging:
+      +schema: main_staging
+      +materialized: view
+    intermediate:
+      +schema: main_staging
+      +materialized: view
+    marts:
+      +schema: main_marts
+      +materialized: table

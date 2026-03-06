@@ -1,0 +1,12 @@
+
+iaad_mini_pokemon:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "md:airbyte_curso"
+      schema: dbt
+      threads: 4
+      extensions:
+        - httpfs
+        - motherduck

@@ -1,0 +1,89 @@
+
+version: 2
+
+models:
+  - name: stg_pokemon
+    description: "Staging de Pokémon desde PokeAPI con tipado, limpieza y extracción de JSON (types, stats)."
+    columns:
+      - name: pokemon_id
+        description: "Identificador del Pokémon."
+        tests:
+          - not_null
+          - unique
+      - name: pokemon_name
+        description: "Nombre del Pokémon en minúsculas."
+        tests:
+          - not_null
+      - name: base_experience
+        description: "Experiencia base."
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 2000
+
+  - name: stg_pokemon_type_dim
+    description: "Dimensión de tipos (MySQL) normalizada para enriquecer el tipo primario."
+    columns:
+      - name: type_name
+        description: "Nombre del tipo (lowercase)."
+        tests:
+          - not_null
+          - unique
+      - name: type_group
+        description: "Grupo/categoría simplificada para análisis."
+        tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_in_set:
+              arguments:
+                value_set: ['neutral','hot','wet','electric','nature','cold','combat','toxic','earth','air','mystic']
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          arguments:
+            min_value: 18
+            max_value: 18
+
+  - name: int_pokemon_enriched
+    description: "Modelo intermedio: Pokémon enriquecido con type_group desde MySQL."
+    columns:
+      - name: pokemon_id
+        description: "PK del Pokémon."
+        tests:
+          - not_null
+          - unique
+      - name: type_1
+        description: "Tipo primario."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_pokemon_type_dim')
+              field: type_name
+      - name: type_1_group
+        description: "Grupo del tipo primario."
+        tests:
+          - dbt_expectations.expect_column_values_to_not_be_null
+
+  - name: mart_pokemon_obt
+    description: "One Big Table (OBT) para consumo BI: Pokémon + métricas + grupo de tipo."
+    tests:
+      - dbt_expectations.expect_table_row_count_to_be_between:
+          arguments:
+            min_value: 1
+            max_value: 20000
+    columns:
+      - name: pokemon_id
+        description: "PK del Pokémon."
+        tests:
+          - not_null
+          - unique
+      - name: type_1
+        description: "Tipo primario."
+        tests:
+          - not_null
+      - name: weight_per_height
+        description: "Métrica derivada simple (peso/altura) para análisis."
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              arguments:
+                min_value: 0
+                max_value: 1000
