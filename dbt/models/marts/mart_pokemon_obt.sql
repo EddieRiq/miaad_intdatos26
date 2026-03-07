@@ -13,4 +13,4 @@ select
   height_dm,
   weight_hg,
   round(weight_hg / nullif(height_dm,0)::double, 3) as weight_per_height
-from {{ ref('int_pokemon_enriched') }};
+from {{ ref('int_pokemon_enriched') }}

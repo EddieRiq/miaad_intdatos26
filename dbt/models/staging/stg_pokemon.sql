@@ -14,4 +14,4 @@ select
   json_extract(stats, '$[1].base_stat')::int as attack,
   json_extract(stats, '$[2].base_stat')::int as defense,
   json_extract(stats, '$[5].base_stat')::int as speed
-from src;
+from src

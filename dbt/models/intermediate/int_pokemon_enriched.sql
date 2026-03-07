@@ -10,4 +10,4 @@ select
   t.type_group as type_1_group
 from p
 left join t
-  on p.type_1 = t.type_name;
+  on p.type_1 = t.type_name
